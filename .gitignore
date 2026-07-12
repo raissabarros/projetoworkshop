@@ -1,0 +1,43 @@
+# Dependências
+node_modules/
+.pnpm-store/
+
+# Build
+dist/
+dist-ssr/
+*.local
+
+# Variáveis de ambiente (NUNCA commitar)
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Cache / testes
+.cache/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+
+# Vite
+vite.config.ts.timestamp-*
+
+# Cursor (opcional — descomente se não quiser versionar config local)
+# .cursor/

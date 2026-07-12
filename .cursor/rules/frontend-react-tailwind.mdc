@@ -1,0 +1,29 @@
+---
+description: Boas práticas de front-end React + Tailwind v4 para este projeto. Ativa ao editar componentes, páginas e estilos.
+globs: src/**/*.{tsx,ts,css}
+alwaysApply: false
+---
+
+# Front-end — React + Tailwind
+
+## Componentes
+
+- Reutilize `src/app/components/ui/*` (shadcn/Radix) antes de criar do zero
+- Props tipadas; export nomeado para componentes reutilizáveis
+- Lógica de dados em hooks (`useArtworks.ts`, etc.), não na view
+
+## Estilo
+
+- Tokens do tema (`bg-background`, `text-primary`) > cores hex inline
+- `cn()` para classes condicionais
+- Tailwind v4: `@import 'tailwindcss'` em `src/styles/tailwind.css`
+
+## Layout
+
+- Flex/Grid por padrão; absolute só para overlays
+- Mobile-first breakpoints
+- Imagens: `ImageWithFallback` quando aplicável
+
+## Ao melhorar UI
+
+Invoque o agente `frontend-specialist` ou aplique a skill `frontend-design`.
