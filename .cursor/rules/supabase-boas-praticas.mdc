@@ -1,0 +1,19 @@
+---
+description: Boas práticas Supabase — RLS, segurança, queries e estrutura de dados.
+globs: src/**/*.{tsx,ts},docs/ENVIRONMENT.md,.env.example
+alwaysApply: false
+---
+
+# Supabase
+
+- Cliente em `src/app/services/supabase.ts` (quando integrar)
+- Apenas `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` no frontend
+- **Nunca** `service_role` no client
+- RLS ativo em todas as tabelas públicas
+- Policies claras: least privilege por operação (SELECT/INSERT/UPDATE/DELETE)
+- Validar dados antes de INSERT/UPDATE
+- Lógica complexa → Edge Functions ou RPC, não no componente
+- Queries: `select` específico (colunas necessárias), não `*`
+- Tratar `{ data, error }` em toda chamada; UI de erro amigável
+- Evitar N+1 e chamadas redundantes; batch quando possível
+- Nomes de tabelas/colunas em snake_case, consistentes

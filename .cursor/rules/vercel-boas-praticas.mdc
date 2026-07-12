@@ -1,0 +1,19 @@
+---
+description: Boas práticas Vercel — deploy, env, performance e SEO.
+alwaysApply: true
+---
+
+# Vercel
+
+- Build deve passar: `pnpm run build` antes de deploy
+- Variáveis de ambiente no painel Vercel (Production + Preview):
+  - `VITE_SUPABASE_URL`
+  - `VITE_SUPABASE_ANON_KEY`
+  - `VITE_APP_ENV`
+- Nunca secrets no código fonte
+- Lazy loading de rotas e assets pesados
+- Otimizar imagens (formato, tamanho, lazy)
+- Preview deployments para validar PRs
+- SEO básico em `index.html`: `<title>`, `<meta name="description">`, `lang="pt-BR"`
+- Evitar requests desnecessários no carregamento inicial
+- Monitorar logs de runtime após deploy

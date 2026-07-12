@@ -1,0 +1,18 @@
+---
+description: Boas práticas Tailwind CSS v4 — utilitários, design system, acessibilidade.
+globs: src/**/*.{tsx,css}
+alwaysApply: false
+---
+
+# Tailwind CSS v4
+
+- Utilitários Tailwind > CSS customizado > inline styles
+- Tokens do tema (`bg-background`, `text-primary`, `border-border`) em `src/styles/theme.css`
+- Migrar hex hardcoded (`#B5222A`) para tokens ao refatorar
+- Classes longas: extrair componente ou usar `cn()` de `src/app/components/ui/utils.ts`
+- Mobile-first: base → `sm:` → `md:` → `lg:`
+- Variantes: `hover:`, `focus-visible:`, `disabled:`, `dark:` quando aplicável
+- Padrões repetidos → componente (Button, Card, SectionHeading)
+- UI simples e clara; evitar overdesign
+- Contraste WCAG AA; focus visível; touch targets ≥ 44px
+- Config em `src/styles/tailwind.css` via `@import 'tailwindcss'`

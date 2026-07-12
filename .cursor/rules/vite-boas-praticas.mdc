@@ -1,0 +1,16 @@
+---
+description: Boas práticas Vite — env, aliases, bundle e estrutura do build.
+globs: vite.config.ts,package.json,.env.example,src/main.tsx
+alwaysApply: false
+---
+
+# Vite
+
+- Config centralizada em `vite.config.ts`
+- Variáveis de ambiente via `.env` (prefixo `VITE_` para expor ao client)
+- Nunca expor secrets no frontend (sem `service_role`, PAT, tokens MCP)
+- Import dinâmico para rotas e módulos pesados
+- Evitar dependências desnecessárias no `package.json`
+- Alias `@` → `./src` (já configurado)
+- Tipos de env em `src/vite-env.d.ts`
+- Documentação de env em `docs/ENVIRONMENT.md` e `.env.example`

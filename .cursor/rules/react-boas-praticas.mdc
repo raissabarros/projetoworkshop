@@ -1,0 +1,24 @@
+---
+description: Boas práticas React — hooks, estado, composição e estrutura de componentes.
+globs: src/**/*.{tsx,ts}
+alwaysApply: false
+---
+
+# React
+
+- Apenas functional components + hooks (nunca classes)
+- `useEffect` só para side effects reais (fetch, subscriptions, DOM sync)
+- Não usar `useEffect` para derivar estado — calcular inline ou `useMemo`
+- `useState` mínimo; state lifting só quando necessário
+- Responsabilidade única por componente
+- Props drilling: preferir composição ou Context quando > 2 níveis
+- Reutilizar `src/app/components/ui/*` (shadcn/Radix)
+- Lazy loading para páginas pesadas (`React.lazy` + `Suspense` em `routes.ts`)
+- `key` única e estável em listas (preferir `id`, não índice)
+- Lógica complexa fora do JSX — handlers e hooks nomeados
+- Props tipadas com TypeScript; evitar `any`
+
+## Imports
+
+- Alias `@/` para `src/` (configurado no Vite)
+- Páginas em `src/app/pages/`, hooks em `src/app/hooks/`

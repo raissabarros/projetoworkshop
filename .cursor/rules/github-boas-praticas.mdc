@@ -1,0 +1,20 @@
+---
+description: Boas práticas Git/GitHub — commits, branches, PRs e segurança.
+globs: .gitignore,.env.example
+alwaysApply: true
+---
+
+# GitHub
+
+- Commits pequenos e descritivos no padrão Conventional Commits:
+  - `feat:` nova funcionalidade
+  - `fix:` correção de bug
+  - `refactor:` refatoração sem mudança de comportamento
+  - `chore:` config, deps, docs
+  - `style:` UI/CSS sem lógica
+- **Nunca** commitar `.env`, credenciais ou tokens
+- Branch por feature: `feature/nome-da-feature`
+- Pull Request antes de merge na `main`
+- Revisar diff antes de aprovar
+- Evitar commits genéricos (`update`, `fix stuff`)
+- Verificar `git status` antes de cada commit

@@ -1,0 +1,41 @@
+---
+description: Padrões globais de código — limpeza, modularidade, DRY, segurança e responsividade.
+alwaysApply: true
+---
+
+# Regras globais
+
+- Código limpo, legível e modular
+- DRY: evitar duplicação; extrair helpers e componentes reutilizáveis
+- Composição > herança
+- Funções e componentes pequenos, com responsabilidade única
+- Nomes descritivos (sem abreviações confusas: `bp` → preferir `breakpoint` em APIs públicas)
+- Separar lógica de negócio da UI (hooks, services, utils)
+- Comentários só quando a intenção não for óbvia
+- Tratar erros: try/catch, fallbacks de UI, estados empty/error/loading
+- Mobile-first em todo layout
+- Nunca hardcodar tokens, keys ou URLs privadas — usar `.env` (`VITE_*`)
+
+## Estrutura do projeto
+
+```
+src/app/components/   → UI reutilizável
+src/app/hooks/        → lógica React (criar quando extrair)
+src/app/services/     → Supabase, APIs externas
+src/app/utils/        → funções puras
+src/app/pages/        → rotas/páginas
+```
+
+## Nível sênior
+
+- Escalabilidade desde o início; baixo acoplamento
+- Abstrações só quando há repetição real
+- Performance antes de escalar infra
+- Código mantível por outras pessoas
+- UX em primeiro lugar
+
+## Produção (avançado)
+
+- Código production-ready; evitar boilerplate genérico
+- Preferir soluções modernas e performáticas
+- Explicar decisões quando forem não óbvias
