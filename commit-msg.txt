@@ -1,5 +1,1 @@
-feat: connect catalog to Supabase, sticker galleries and deploy prep
-
-Replace localStorage mocks with Supabase services, add admin Google auth,
-sticker image carousels from Storage, storage bucket migrations, and Vercel
-build fix for pnpm lockfile overrides.
+chore: remove accidental commit message file
