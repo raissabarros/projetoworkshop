@@ -1,22 +1,47 @@
-import { useState } from "react"
-import { useNavigate } from "react-router"
-import { Eye, EyeOff, Lock } from "lucide-react"
+import { useEffect } from "react"
+import { Link, useNavigate } from "react-router"
+import { Lock } from "lucide-react"
+import { useAdminAuth } from "../hooks/useAdminAuth"
+
+function GoogleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+      <path
+        fill="#4285F4"
+        d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c3.4-3.13 3.684-7.738 1.622-11.616z"
+      />
+      <path
+        fill="#34A853"
+        d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.997 8.997 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"
+      />
+      <path
+        fill="#EA4335"
+        d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"
+      />
+    </svg>
+  )
+}
 
 export default function AdminLogin() {
   const navigate = useNavigate()
-  const [showPass, setShowPass] = useState(false)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
+  const { isAdmin, loading, error, signInWithGoogle, clearError } = useAdminAuth()
 
-  function handleLogin(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setTimeout(() => {
-      sessionStorage.setItem("ga_admin", "1")
-      navigate("/admin/dashboard")
-    }, 800)
+  useEffect(() => {
+    if (!loading && isAdmin) {
+      navigate("/admin/dashboard", { replace: true })
+    }
+  }, [loading, isAdmin, navigate])
+
+  async function handleGoogleLogin() {
+    clearError()
+    await signInWithGoogle()
   }
+
+  const checkingSession = loading && !error
 
   return (
     <div className="min-h-screen flex" style={{ fontFamily: "'DM Sans', sans-serif" }}>
@@ -26,7 +51,6 @@ export default function AdminLogin() {
         className="hidden lg:flex flex-col justify-between flex-1 px-16 py-12"
         style={{ backgroundColor: "#B5222A" }}
       >
-        {/* Logo */}
         <div>
           <p className="font-bold text-[#F7F3EC] uppercase tracking-widest text-xl" style={{ fontFamily: "'Playfair Display', serif", letterSpacing: "0.12em" }}>
             Galeria & Ateliê
@@ -36,7 +60,6 @@ export default function AdminLogin() {
           </p>
         </div>
 
-        {/* Big headline */}
         <div>
           <p className="text-[#F7F3EC] text-xs uppercase tracking-[0.25em] mb-4 opacity-70">
             Painel Administrativo
@@ -54,7 +77,6 @@ export default function AdminLogin() {
           </p>
         </div>
 
-        {/* Decorative polaroids */}
         <div className="flex items-end gap-4">
           {[
             { bg: "#EFE8DC", rot: -4, h: 80 },
@@ -78,10 +100,9 @@ export default function AdminLogin() {
         </div>
       </div>
 
-      {/* Right panel — form */}
+      {/* Right panel */}
       <div className="flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-16 py-12 lg:max-w-md xl:max-w-lg" style={{ backgroundColor: "#F7F3EC" }}>
 
-        {/* Mobile logo */}
         <div className="lg:hidden mb-10">
           <p className="font-bold text-[#231F1C] uppercase tracking-widest text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
             Galeria & Ateliê
@@ -90,7 +111,6 @@ export default function AdminLogin() {
         </div>
 
         <div className="max-w-sm w-full mx-auto lg:mx-0">
-          {/* Icon */}
           <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-6" style={{ backgroundColor: "#B5222A" }}>
             <Lock size={20} color="#F7F3EC" />
           </div>
@@ -99,98 +119,63 @@ export default function AdminLogin() {
             Entrar no painel
           </h2>
           <p className="text-[#6E5B47] text-sm mb-8">
-            Acesse para gerenciar obras e adesivos da galeria.
+            Acesso exclusivo para administradores via Google.
           </p>
 
-          <form onSubmit={handleLogin} className="space-y-5">
-            {/* Email */}
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-widest text-[#231F1C] mb-2">
-                E-mail
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@galeria.com"
-                className="w-full px-4 py-3 rounded-lg text-sm outline-none transition-all"
-                style={{
-                  backgroundColor: "#EFE8DC",
-                  border: "1.5px solid rgba(35,31,28,0.12)",
-                  color: "#231F1C",
-                  fontFamily: "'DM Sans', sans-serif",
-                }}
-                onFocus={(e) => { (e.target as HTMLElement).style.borderColor = "#B5222A" }}
-                onBlur={(e) => { (e.target as HTMLElement).style.borderColor = "rgba(35,31,28,0.12)" }}
-              />
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-widest text-[#231F1C] mb-2">
-                Senha
-              </label>
-              <div className="relative">
-                <input
-                  type={showPass ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 pr-12 rounded-lg text-sm outline-none transition-all"
-                  style={{
-                    backgroundColor: "#EFE8DC",
-                    border: "1.5px solid rgba(35,31,28,0.12)",
-                    color: "#231F1C",
-                    fontFamily: "'DM Sans', sans-serif",
-                  }}
-                  onFocus={(e) => { (e.target as HTMLElement).style.borderColor = "#B5222A" }}
-                  onBlur={(e) => { (e.target as HTMLElement).style.borderColor = "rgba(35,31,28,0.12)" }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPass((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded transition-colors hover:bg-[#EFE8DC]"
-                  style={{ color: "#6E5B47" }}
-                >
-                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-            </div>
-
-            {/* Hint */}
-            <p className="text-[#B5222A] text-xs italic" style={{ fontFamily: "'Caveat', cursive" }}>
-              ✦ clique em entrar para acessar o painel
-            </p>
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3.5 rounded-lg font-bold text-sm uppercase tracking-widest transition-all"
-              style={{
-                fontFamily: "'DM Sans', sans-serif",
-                backgroundColor: loading ? "#C9878B" : "#B5222A",
-                color: "#F7F3EC",
-                opacity: loading ? 0.8 : 1,
-              }}
-              onMouseEnter={(e) => { if (!loading) (e.currentTarget as HTMLElement).style.backgroundColor = "#8F1A21" }}
-              onMouseLeave={(e) => { if (!loading) (e.currentTarget as HTMLElement).style.backgroundColor = "#B5222A" }}
+          {error && (
+            <div
+              className="mb-6 px-4 py-3 rounded-lg text-sm"
+              style={{ backgroundColor: "#FCE8E9", color: "#8F1A21", border: "1px solid rgba(181,34,42,0.2)" }}
+              role="alert"
             >
-              {loading ? "Entrando..." : "Entrar no Painel"}
-            </button>
-          </form>
+              {error}
+            </div>
+          )}
 
-          {/* Back to site */}
+          {checkingSession ? (
+            <div className="flex flex-col items-center gap-3 py-8">
+              <div
+                className="w-8 h-8 rounded-full border-2 border-[#B5222A] border-t-transparent animate-spin"
+                aria-hidden="true"
+              />
+              <p className="text-sm text-[#6E5B47]">Verificando sessão...</p>
+            </div>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => void handleGoogleLogin()}
+                disabled={loading}
+                className="w-full py-3.5 px-4 rounded-lg font-semibold text-sm flex items-center justify-center gap-3 transition-all disabled:opacity-70"
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  backgroundColor: "#FFFFFF",
+                  color: "#231F1C",
+                  border: "1.5px solid rgba(35,31,28,0.15)",
+                  boxShadow: "0 1px 3px rgba(35,31,28,0.08)",
+                }}
+              >
+                <GoogleIcon />
+                {loading ? "Redirecionando..." : "Continuar com Google"}
+              </button>
+
+              <p className="text-[#6E5B47] text-xs mt-6 leading-relaxed">
+                Use a conta <strong>raissabarros@alu.ufc.br</strong> cadastrada como admin.
+                Outras contas Google não terão acesso ao painel.
+              </p>
+            </>
+          )}
+
           <div className="mt-8 pt-6" style={{ borderTop: "1px solid rgba(35,31,28,0.1)" }}>
-            <a
-              href="/"
+            <Link
+              to="/"
               className="text-xs font-semibold uppercase tracking-widest transition-colors"
               style={{ color: "#6E5B47" }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#B5222A" }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#6E5B47" }}
             >
               ← Voltar para o site
-            </a>
+            </Link>
           </div>
         </div>
       </div>

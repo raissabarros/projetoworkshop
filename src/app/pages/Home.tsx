@@ -342,11 +342,12 @@ export default function Home() {
   const isMobile = bp === "mobile"
   const [searchParams] = useSearchParams()
 
-  const { artworks } = useArtworks()
-  const { stickers } = useStickers()
+  const { artworks, loading: artworksLoading } = useArtworks()
+  const { stickers, loading: stickersLoading } = useStickers()
 
   const activeArtworks = artworks.filter((a) => a.status === "active")
   const activeStickers = stickers.filter((s) => s.status === "active")
+  const catalogLoading = artworksLoading || stickersLoading
 
   const [section, setSection] = useState<Section>(
     searchParams.get("section") === "loja" ? "loja" : "galeria"
@@ -499,11 +500,15 @@ export default function Home() {
               ))}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-14 gap-x-6 sm:gap-x-8 justify-items-center">
-              {filteredPaintings.map((painting) => (
-                <PaintingCard key={painting.id} painting={painting} onView={setViewingPainting} interactive={isDesktop} />
-              ))}
+              {catalogLoading ? (
+                <p className="col-span-full text-sm text-[#6E5B47] py-12">Carregando obras...</p>
+              ) : (
+                filteredPaintings.map((painting) => (
+                  <PaintingCard key={painting.id} painting={painting} onView={setViewingPainting} interactive={isDesktop} />
+                ))
+              )}
             </div>
-            {filteredPaintings.length === 0 && (
+            {!catalogLoading && filteredPaintings.length === 0 && (
               <div className="text-center py-20">
                 <p className="text-[#B5222A] text-2xl italic" style={{ fontFamily: "'Caveat', cursive" }}>nenhuma obra encontrada...</p>
                 <button onClick={() => setActivePeriod("Todos")} className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-bold text-sm uppercase tracking-widest border transition-colors" style={{ border: "1.5px solid #B5222A", color: "#B5222A" }}>
@@ -536,9 +541,13 @@ export default function Home() {
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-14 gap-x-6 sm:gap-x-8 justify-items-center">
-              {activeStickers.map((sticker) => (
-                <StickerCard key={sticker.id} sticker={sticker} onAdd={addToCart} interactive={isDesktop} />
-              ))}
+              {catalogLoading ? (
+                <p className="col-span-full text-sm text-[#6E5B47] py-12">Carregando cartelas...</p>
+              ) : (
+                activeStickers.map((sticker) => (
+                  <StickerCard key={sticker.id} sticker={sticker} onAdd={addToCart} interactive={isDesktop} />
+                ))
+              )}
             </div>
           </div>
         </section>

@@ -65,6 +65,32 @@ Use `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` em **Production**, **Preview*
 3. Ative **Row Level Security (RLS)** em todas as tabelas públicas.
 4. Tokens de MCP, GitHub PAT e service role ficam **fora** deste repositório.
 
+## Google OAuth (admin)
+
+Login do painel `/admin` usa **Google via Supabase Auth**. O OAuth do Google é gratuito.
+
+### 1. Google Cloud Console
+
+1. Acesse [Google Cloud Console](https://console.cloud.google.com/) → **APIs & Services → Credentials**.
+2. Crie um projeto (ou use um existente).
+3. **Create Credentials → OAuth client ID → Web application**.
+4. **Authorized redirect URIs** (obrigatório):
+   ```
+   https://mixnbxudvtwspsfthimg.supabase.co/auth/v1/callback
+   ```
+5. Copie **Client ID** e **Client Secret**.
+
+### 2. Supabase Dashboard
+
+1. **Authentication → Providers → Google** → ativar e colar Client ID + Secret.
+2. **Authentication → URL Configuration**:
+   - **Site URL:** `http://localhost:5173` (dev) ou URL da Vercel (prod)
+   - **Redirect URLs:** inclua `http://localhost:5173/**` e `https://seu-dominio.vercel.app/**`
+
+### 3. Conta admin
+
+O e-mail `raissabarros@alu.ufc.br` recebe role `admin` automaticamente no primeiro login (trigger `handle_new_user`).
+
 ## Checklist antes do primeiro push
 
 - [ ] `.env` **não** aparece em `git status`

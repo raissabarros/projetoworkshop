@@ -1,5 +1,6 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
+import { useAdminAuth } from "../hooks/useAdminAuth"
 import {
   Plus, Pencil, Trash2, PauseCircle, PlayCircle,
   X, LayoutGrid, ExternalLink, Search, ChevronDown,
@@ -324,7 +325,8 @@ function Toast({ message, onDone }: { message: string; onDone: () => void }) {
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
-  const { artworks, addArtwork, updateArtwork, deleteArtwork, toggleArtworkStatus } = useArtworks()
+  const { isAdmin, loading: authLoading, signOut } = useAdminAuth()
+  const { artworks, loading: catalogLoading, error: catalogError, addArtwork, updateArtwork, deleteArtwork, toggleArtworkStatus } = useArtworks()
 
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [editingArtwork, setEditingArtwork] = useState<Artwork | null>(null)
@@ -335,9 +337,30 @@ export default function AdminDashboard() {
 
   function showToast(msg: string) { setToast(msg) }
 
-  function handleLogout() {
-    sessionStorage.removeItem("ga_admin")
-    navigate("/admin")
+  useEffect(() => {
+    if (!authLoading && !isAdmin) {
+      navigate("/admin", { replace: true })
+    }
+  }, [authLoading, isAdmin, navigate])
+
+  async function handleLogout() {
+    await signOut()
+    navigate("/admin", { replace: true })
+  }
+
+  if (authLoading || !isAdmin) {
+    return (
+      <div
+        className="min-h-screen flex flex-col items-center justify-center gap-3"
+        style={{ backgroundColor: "#F7F3EC", fontFamily: "'DM Sans', sans-serif" }}
+      >
+        <div
+          className="w-8 h-8 rounded-full border-2 border-[#B5222A] border-t-transparent animate-spin"
+          aria-hidden="true"
+        />
+        <p className="text-sm text-[#6E5B47]">Carregando painel...</p>
+      </div>
+    )
   }
 
   function openNew() { setEditingArtwork(null); setDrawerOpen(true) }
@@ -345,27 +368,45 @@ export default function AdminDashboard() {
   function closeDrawer() { setDrawerOpen(false); setEditingArtwork(null) }
 
   function handleSave(data: FormData) {
-    const periodColor = getPeriodColor(data.period)
-    if (editingArtwork) {
-      updateArtwork(editingArtwork.id, { ...data, periodColor })
-      showToast("Obra atualizada com sucesso!")
-    } else {
-      addArtwork({ ...data, periodColor })
-      showToast("Obra cadastrada com sucesso!")
-    }
-    closeDrawer()
+    void (async () => {
+      try {
+        const periodColor = getPeriodColor(data.period)
+        if (editingArtwork) {
+          await updateArtwork(editingArtwork.id, { ...data, periodColor })
+          showToast("Obra atualizada com sucesso!")
+        } else {
+          await addArtwork({ ...data, periodColor })
+          showToast("Obra cadastrada com sucesso!")
+        }
+        closeDrawer()
+      } catch (err) {
+        showToast(err instanceof Error ? err.message : "Erro ao salvar obra")
+      }
+    })()
   }
 
   function handleDelete() {
     if (!deletingArtwork) return
-    deleteArtwork(deletingArtwork.id)
-    showToast("Obra excluída.")
-    setDeletingArtwork(null)
+    void (async () => {
+      try {
+        await deleteArtwork(deletingArtwork.id)
+        showToast("Obra excluída.")
+        setDeletingArtwork(null)
+      } catch (err) {
+        showToast(err instanceof Error ? err.message : "Erro ao excluir obra")
+      }
+    })()
   }
 
   function handleToggle(a: Artwork) {
-    toggleArtworkStatus(a.id)
-    showToast(a.status === "active" ? `"${a.title}" pausada no site.` : `"${a.title}" reativada no site.`)
+    void (async () => {
+      try {
+        await toggleArtworkStatus(a.id)
+        showToast(a.status === "active" ? `"${a.title}" pausada no site.` : `"${a.title}" reativada no site.`)
+      } catch (err) {
+        showToast(err instanceof Error ? err.message : "Erro ao atualizar status")
+      }
+    })()
   }
 
   const filtered = artworks.filter((a) => {
@@ -420,6 +461,24 @@ export default function AdminDashboard() {
       </header>
 
       <main className="px-4 sm:px-8 md:px-12 py-8 max-w-7xl mx-auto">
+
+        {catalogError && (
+          <div
+            className="mb-6 px-4 py-3 rounded-lg text-sm"
+            style={{ backgroundColor: "#FCE8E9", color: "#8F1A21", border: "1px solid rgba(181,34,42,0.2)" }}
+            role="alert"
+          >
+            Erro ao carregar obras: {catalogError}
+          </div>
+        )}
+
+        {catalogLoading ? (
+          <div className="flex flex-col items-center justify-center gap-3 py-24">
+            <div className="w-8 h-8 rounded-full border-2 border-[#B5222A] border-t-transparent animate-spin" aria-hidden="true" />
+            <p className="text-sm text-[#6E5B47]">Carregando obras...</p>
+          </div>
+        ) : (
+        <>
 
         {/* ── PAGE TITLE ── */}
         <div className="mb-8">
@@ -711,6 +770,8 @@ export default function AdminDashboard() {
             })
           )}
         </div>
+        </>
+        )}
       </main>
 
       {/* Overlays */}

@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from "react"
 import { useParams, useNavigate, Link } from "react-router"
 import { ArrowLeft, X, ChevronLeft, ChevronRight, ZoomIn, ShoppingBag, Plus, Minus } from "lucide-react"
 import { useStickers, type Sticker } from "../useArtworks"
-import { STICKER_GALLERIES } from "../stickerGalleries"
 
 // ─── Cart persistence (shared with Home via localStorage) ─────────────────────
 
@@ -183,12 +182,12 @@ function PhotoGallery({ photos, title }: { photos: string[]; title: string }) {
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { stickers } = useStickers()
+  const { stickers, loading } = useStickers()
 
   const stickerId = Number(id)
   const sticker = stickers.find((s) => s.id === stickerId)
 
-  const photos = STICKER_GALLERIES[stickerId] ?? (sticker ? [sticker.image] : [])
+  const photos = sticker?.gallery.length ? sticker.gallery : []
 
   const [cart, setCart] = useState<CartItem[]>(loadCart)
   const [qty, setQty] = useState(1)
@@ -207,6 +206,16 @@ export default function ProductDetail() {
     })
     setAdded(true)
     setTimeout(() => setAdded(false), 2000)
+  }
+
+  // Loading
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#F7F3EC] flex flex-col items-center justify-center gap-3 px-4">
+        <div className="w-8 h-8 rounded-full border-2 border-[#B5222A] border-t-transparent animate-spin" aria-hidden="true" />
+        <p className="text-sm text-[#6E5B47]">Carregando produto...</p>
+      </div>
+    )
   }
 
   // 404-ish: sticker not found
