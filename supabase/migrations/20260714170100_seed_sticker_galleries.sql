@@ -41,11 +41,12 @@ BEGIN
     (104, base || 'surreal5_1.jpg', 0),
     (104, base || 'surreal5_2.jpg', 1);
 
-  -- 105 Ouro & Amor (Klimt)
+  -- 105 Ouro & Amor (Klimt) — Art Nouveau · Simbolismo (sem imagens próprias ainda)
   UPDATE public.stickers
-  SET image_url = base || 'impress3_1.jpg'
+  SET
+    title = 'Ouro & Amor (Klimt)',
+    description = '6 adesivos · Art Nouveau · Simbolismo · dourados · laminados',
+    note = 'brilho especial ✦',
+    image_url = 'https://images.unsplash.com/photo-1578301978693-aa1d4e4c4ef0?w=400&h=400&fit=crop&auto=format'
   WHERE id = 105;
-
-  INSERT INTO public.sticker_images (sticker_id, image_url, sort_order) VALUES
-    (105, base || 'impress3_1.jpg', 0);
 END $$;

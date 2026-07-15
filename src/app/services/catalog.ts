@@ -1,6 +1,14 @@
 import { supabase } from "./supabase"
 import type { Artwork, ArtworkInput, CatalogStatus, Sticker } from "../types/catalog"
 
+const KLIMT_PAINTING_STORAGE_PATH = "catalog/pinturas/artnov1_1.png"
+
+export function getKlimtHighlightImage(): string {
+  const base = import.meta.env.VITE_SUPABASE_URL
+  if (!base) return ""
+  return `${base}/storage/v1/object/public/${KLIMT_PAINTING_STORAGE_PATH}`
+}
+
 type ArtworkRow = {
   id: number
   title: string

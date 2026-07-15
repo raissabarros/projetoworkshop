@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { useNavigate, useSearchParams } from "react-router"
 import { ShoppingBag, X, Plus, Minus, ChevronRight, Sparkles, Package, Menu } from "lucide-react"
 import { useArtworks, useStickers, type Artwork, type Sticker } from "../useArtworks"
+import { getKlimtHighlightImage } from "../services/catalog"
 import heroBg from "../../imports/abstract-6305508_1280.jpg"
 import BordaRasgada3 from "../../imports/BordaRasgada-3/index"
 import clip1 from "../../imports/image-1.png"
@@ -50,7 +51,7 @@ const periodColors: Record<string, string> = {
   coral: "bg-[#E07856] text-[#F7F3EC]",
 }
 
-const allPeriods = ["Todos", "Renascimento", "Pós-impressionismo", "Modernismo", "Surrealismo", "Simbolismo", "Barroco", "Barroco Flamengo"]
+const allPeriods = ["Todos", "Renascimento", "Pós-impressionismo", "Modernismo", "Surrealismo", "Simbolismo", "Art Nouveau", "Barroco", "Barroco Flamengo"]
 
 // ─── Decorative Atoms ─────────────────────────────────────────────────────────
 
@@ -340,7 +341,7 @@ export default function Home() {
   const bp = useBreakpoint()
   const isDesktop = bp === "desktop"
   const isMobile = bp === "mobile"
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const { artworks, loading: artworksLoading } = useArtworks()
   const { stickers, loading: stickersLoading } = useStickers()
@@ -348,10 +349,17 @@ export default function Home() {
   const activeArtworks = artworks.filter((a) => a.status === "active")
   const activeStickers = stickers.filter((s) => s.status === "active")
   const catalogLoading = artworksLoading || stickersLoading
+  const klimtHighlightImage =
+    activeArtworks.find((a) => a.title === "O Beijo")?.image
+    ?? activeArtworks[0]?.image
+    ?? getKlimtHighlightImage()
 
   const [section, setSection] = useState<Section>(
     searchParams.get("section") === "loja" ? "loja" : "galeria"
   )
+  useEffect(() => {
+    setSection(searchParams.get("section") === "loja" ? "loja" : "galeria")
+  }, [searchParams])
   const [cartItems, setCartItems] = useState<CartItem[]>(loadCart)
   const [cartOpen, setCartOpen] = useState(false)
   const [activePeriod, setActivePeriod] = useState("Todos")
@@ -383,7 +391,11 @@ export default function Home() {
 
   const availablePeriods = ["Todos", ...Array.from(new Set(activeArtworks.map((a) => a.period)))]
 
-  function goTo(s: Section) { setSection(s); setMobileMenuOpen(false) }
+  function goTo(s: Section) {
+    setSection(s)
+    setMobileMenuOpen(false)
+    setSearchParams(s === "loja" ? { section: "loja" } : {}, { replace: true })
+  }
 
   return (
     <div className="min-h-screen bg-[#F7F3EC] overflow-x-hidden" style={{ fontFamily: "'DM Sans', sans-serif" }}>
@@ -430,16 +442,33 @@ export default function Home() {
       )}
 
       {/* HERO */}
-      <section
-        className="relative"
-        style={{
-          backgroundImage: `url(${heroBg as string})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center 30%",
-        }}
-      >
+      <section className="relative overflow-hidden">
+        {section === "galeria" ? (
+          <img
+            src={oilPaintGif as unknown as string}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ objectPosition: "center 30%" }}
+          />
+        ) : (
+          <img
+            src={heroBg as unknown as string}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ objectPosition: "center 30%" }}
+          />
+        )}
         {/* overlay vermelho para manter legibilidade */}
-        <div className="absolute inset-0" style={{ backgroundColor: "rgba(181,34,42,0.82)" }} />
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundColor: section === "galeria"
+              ? "rgba(181,34,42,0.68)"
+              : "rgba(181,34,42,0.82)",
+          }}
+        />
         <div className="px-4 sm:px-8 md:px-16 pt-10 sm:pt-14 md:pt-16 pb-16 sm:pb-20 relative z-10" style={{ position: "relative", zIndex: 1 }}>
           <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 lg:gap-12">
             <div className="flex-1">
@@ -553,64 +582,30 @@ export default function Home() {
         </section>
       )}
 
-      {/* VIDEO SECTION */}
-      <section
-        className="relative overflow-hidden mt-10 sm:mt-16"
-        style={{ height: "clamp(320px, 55vw, 620px)" }}
-      >
-        <img
-          src={oilPaintGif as unknown as string}
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        {/* Dark ink overlay for legibility */}
-        <div
-          className="absolute inset-0"
-          style={{ background: "linear-gradient(to bottom, rgba(35,31,28,0.38) 0%, rgba(35,31,28,0.18) 50%, rgba(35,31,28,0.52) 100%)" }}
-        />
-        {/* Content */}
-        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center p-[0px]">
-          <p
-            className="text-[#F7F3EC] text-xs sm:text-sm uppercase tracking-[0.28em] mb-4 opacity-75"
-            style={{ fontFamily: "'DM Sans', sans-serif" }}
-          >
-            processo criativo
-          </p>
-          <h2
-            className="font-bold text-[#F7F3EC] uppercase leading-none"
-            style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: "clamp(2rem, 6vw, 5rem)",
-              letterSpacing: "0.04em",
-              textShadow: "0 2px 24px rgba(35,31,28,0.5)",
-            }}
-          >
-            Tinta sobre<br />
-            <span style={{ fontStyle: "italic", color: "#F7C5A0" }}>tela viva</span>
-          </h2>
-          <p
-            className="mt-4 text-[#F7F3EC] opacity-80 max-w-sm"
-            style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(16px, 2.5vw, 20px)" }}
-          >
-            cada adesivo carrega o gesto original do pintor ✦
-          </p>
-        </div>
-      </section>
-
       {/* FEATURED BANNER */}
       <section style={{ backgroundColor: "#B5222A" }} className="p-[64px]">
           <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center gap-8 sm:gap-10 text-center sm:text-left">
             <div className="flex-shrink-0">
               <div className="bg-white shadow-2xl mx-auto sm:mx-0" style={{ padding: "8px 8px 32px", transform: "rotate(-3deg)", boxShadow: "0 8px 32px rgba(35,31,28,0.3)", width: 160 }}>
-                <img src={activeArtworks.find((a) => a.title === "O Beijo")?.image ?? activeArtworks[0]?.image ?? ""} alt="Destaque" className="object-cover w-full" style={{ height: 196 }} />
+                <img
+                  src={klimtHighlightImage}
+                  alt="O Beijo, de Gustav Klimt"
+                  className="object-cover w-full"
+                  style={{ height: 196 }}
+                  onError={(e) => {
+                    const fallback = getKlimtHighlightImage()
+                    if (fallback && e.currentTarget.src !== fallback) {
+                      e.currentTarget.src = fallback
+                    }
+                  }}
+                />
                 <p className="text-center text-[10px] mt-2 text-[#231F1C] font-medium">O Beijo · Klimt</p>
               </div>
             </div>
             <div className="flex-1">
               <p className="text-[#F7F3EC] text-xs uppercase tracking-[0.2em] opacity-80 mb-2">Destaque da coleção</p>
               <h3 className="font-bold text-[#F7F3EC] uppercase leading-tight" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(1.8rem, 4vw, 3rem)" }}>Cartela Ouro & <span style={{ fontStyle: "italic" }}>Amor</span></h3>
-              <p className="text-[#F7F3EC] opacity-80 text-sm mt-3 max-w-md leading-relaxed mx-auto sm:mx-0">6 adesivos laminados com acabamento dourado inspirados em Klimt. Edição limitada de 200 unidades — colecionável.</p>
+              <p className="text-[#F7F3EC] opacity-80 text-sm mt-3 max-w-md leading-relaxed mx-auto sm:mx-0">6 adesivos laminados com acabamento dourado — Art Nouveau & Simbolismo, inspirados em Klimt. Edição limitada de 200 unidades.</p>
               <p className="text-[#F7F3EC] opacity-70 text-lg italic mt-2" style={{ fontFamily: "'Caveat', cursive" }}>"amor que brilha além do tempo" ✦</p>
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 mt-5">
                 <span className="text-[#F7F3EC] font-bold text-2xl" style={{ fontFamily: "'Playfair Display', serif" }}>R$ 52,90</span>

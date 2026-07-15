@@ -226,7 +226,7 @@ export default function ProductDetail() {
           produto não encontrado...
         </p>
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/?section=loja")}
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-bold text-sm uppercase tracking-widest transition-colors"
           style={{ backgroundColor: "#B5222A", color: "#F7F3EC", fontFamily: "'DM Sans', sans-serif" }}
         >
@@ -317,7 +317,7 @@ export default function ProductDetail() {
       {/* ── Back button ────────────────────────────────────────────── */}
       <div className="px-4 sm:px-8 md:px-16 pt-5 pb-1">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/?section=loja")}
           className="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors hover:text-[#B5222A]"
           style={{ color: "#6E5B47", fontFamily: "'DM Sans', sans-serif" }}
         >
@@ -511,7 +511,7 @@ export default function ProductDetail() {
             "arte que você pode levar junto" ✦
           </p>
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/?section=loja")}
             className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest transition-colors hover:text-[#B5222A]"
             style={{ color: "#6E5B47", fontFamily: "'DM Sans', sans-serif" }}
           >
